@@ -19,12 +19,12 @@ main.o: main.cpp
 	$(CC) -c $< -o $(BIN_DIR)/main.o
 
 main: World.o Cell.o main.o
-	$(CC) $(MAIN_DEPENDENCIES) -o $(EXECUTABLE_NAME) $(SFML_COMPILE_FLAGS)
+	$(CC) $(MAIN_DEPENDENCIES) -o $(BIN_DIR)/$(EXECUTABLE_NAME) $(SFML_COMPILE_FLAGS)
 
 clear:
 	rm $(BIN_DIR)/*.o
 
 run: main
-	./$(EXECUTABLE_NAME)
+	$(BIN_DIR)/$(EXECUTABLE_NAME)
 
 all: main
