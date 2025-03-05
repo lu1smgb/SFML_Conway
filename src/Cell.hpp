@@ -1,3 +1,6 @@
+#ifndef CELL_HPP
+#define CELL_HPP
+
 #include <SFML/Graphics.hpp>
 
 class Cell : public sf::Drawable {
@@ -15,3 +18,5 @@ public:
     bool getStatus() const;
     sf::Vector2f getPosition() const;
 };
+
+#endif

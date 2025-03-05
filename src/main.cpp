@@ -29,8 +29,14 @@ int main() {
     // Cell c2 = Cell(sf::Vector2f(160,120), true, 6, sf::Color::Green);
 
     // World
-    World w = World(80, 50, 4);
+    World w = World(60, 40, 4);
     w.randomizeStatus(0.5);
+    // w.setCellStatus(0,  0,  true);
+    // w.setCellStatus(10, 20, true);
+    // w.setCellStatus(9,  19, true);
+    // w.setCellStatus(11, 19, true);
+    // w.setCellStatus(10, 18, true);
+    w.setOffset(sf::Vector2f(50, 50));
 
     while (window.isOpen()) {
 
