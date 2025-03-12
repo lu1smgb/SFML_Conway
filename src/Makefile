@@ -1,30 +1,27 @@
 CC = g++
-SFML_GRAPHICS = -lsfml-graphics
-SFML_WINDOW = -lsfml-window
-SFML_SYSTEM = -lsfml-system
-SFML_COMPILE_FLAGS = $(SFML_GRAPHICS) $(SFML_WINDOW) $(SFML_SYSTEM)
+SFML_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
 BIN_DIR = ../bin
-
-Cell.o: Cell.cpp Cell.hpp 
-	$(CC) -c $< -o $(BIN_DIR)/Cell.o
 
 World.o: World.cpp World.hpp
 	$(CC) -c $< -o $(BIN_DIR)/World.o
 
+Simulator.o: Simulator.cpp Simulator.hpp
+	$(CC) -c $< -o $(BIN_DIR)/Simulator.o
+
 EXECUTABLE_NAME = main
-MAIN_DEPENDENCIES = $(wildcard $(BIN_DIR)/*.o)
+MAIN_DEPENDENCIES = $(BIN_DIR)/$(EXECUTABLE_NAME).o $(BIN_DIR)/World.o $(BIN_DIR)/Simulator.o
 
-main.o: main.cpp
-	$(CC) -c $< -o $(BIN_DIR)/main.o
+$(EXECUTABLE_NAME).o: $(EXECUTABLE_NAME).cpp
+	$(CC) -c $< -o $(BIN_DIR)/$(EXECUTABLE_NAME).o
 
-main: World.o Cell.o main.o
-	$(CC) $(MAIN_DEPENDENCIES) -o $(BIN_DIR)/$(EXECUTABLE_NAME) $(SFML_COMPILE_FLAGS)
+$(EXECUTABLE_NAME): World.o Simulator.o $(EXECUTABLE_NAME).o
+	$(CC) $(MAIN_DEPENDENCIES) -o $(BIN_DIR)/$(EXECUTABLE_NAME) $(SFML_FLAGS)
 
 clear:
-	rm $(BIN_DIR)/*.o
+	rm $(BIN_DIR)/*.o $(BIN_DIR)/$(EXECUTABLE_NAME)
 
-run: main
+run: $(EXECUTABLE_NAME)
 	$(BIN_DIR)/$(EXECUTABLE_NAME)
 
-all: main
+all: run

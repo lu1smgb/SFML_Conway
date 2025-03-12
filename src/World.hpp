@@ -1,29 +1,33 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
-#include "Cell.hpp"
-
 #include <vector>
+#include <SFML/Graphics.hpp>
 
-typedef std::vector<Cell> CellRow_t;
+typedef std::vector<bool> CellRow_t;
 typedef std::vector<CellRow_t> CellGrid_t;
 
 class World : public sf::Drawable {
+private:
+    bool validIndexes(size_t row, size_t column) const;
+    bool validSize(size_t size) const;
+    bool validDimensions(size_t width, size_t height) const;
 protected:
+    size_t width, height;
+    unsigned long population = 0;
+    unsigned int renderScale = 8;
     CellGrid_t grid;
-    sf::RectangleShape border;
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 public:
-    World(size_t width, size_t height, float cellScale);
+    World();
+    World(World& other);
+    World(size_t width, size_t height);
+    bool getCellStatus(size_t row, size_t column) const;
     void setCellStatus(size_t row, size_t column, bool newStatus);
-    inline bool getCellStatus(size_t row, size_t column);
-    inline size_t getWidth() const;
-    inline void setWidth(size_t width);
-    inline size_t getHeight() const;
-    inline void setHeight(size_t height);
-    void setOffset(float x, float y);
-    void setOffset(sf::Vector2f vec);
-
+    void kill(size_t row, size_t column);
+    void birth(size_t row, size_t column);
+    size_t getWidth() const;
+    size_t getHeight() const;
     void randomizeStatus(float alivePercentage);
 };
 
