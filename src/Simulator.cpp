@@ -11,8 +11,9 @@ unsigned short Simulator::getAliveNeighbours(size_t row, size_t column) const {
     return counter;
 }
 
-Simulator::Simulator(World &world)
-{
+Simulator::Simulator() {}
+
+Simulator::Simulator(World world) {
     this->world = world;
 }
 
@@ -31,10 +32,14 @@ void Simulator::nextTick() {
     gen++;
 }
 
+World* Simulator::getWorld() {
+    return &world;
+}
+
 unsigned long Simulator::getGenerationNumber() const {
     return gen;
 }
 
-void Simulator::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    target.draw(world, states);
+unsigned long Simulator::getWorldPopulation() const {
+    return world.getPopulation();
 }

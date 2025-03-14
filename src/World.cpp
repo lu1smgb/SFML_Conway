@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <random>
-#include <limits>
+#include <climits>
 
 #define BORDER_THICKNESS 2
 
@@ -12,21 +12,20 @@ bool World::validIndexes(size_t row, size_t column) const {
 }
 
 bool World::validSize(size_t size) const {
-    return size > 0 && size <= UINT64_MAX-1;
+    return size > 0 && size <= ULONG_MAX;
 }
 
 bool World::validDimensions(size_t width, size_t height) const {
     return validSize(width) && validSize(height);
 }
 
-World::World() : World(120,70) {}
+World::World() {}
 
-World::World(World& other) {
+World::World(const World& other) {
     this->width = other.width;
     this->height = other.height;
     this->population = other.population;
     this->grid = other.grid;
-    this->renderScale = other.renderScale;
 }
 
 World::World(size_t width, size_t height) {
@@ -42,7 +41,7 @@ World::World(size_t width, size_t height) {
 void World::setCellStatus(size_t row, size_t column, bool newStatus) {
     if (!validIndexes(row, column)) return;
     grid[row][column] = newStatus;
-    population += newStatus ? 1 : -1;
+    population += newStatus ? 1 : -1; // TODO: Problemas de overflow
 }
 
 bool World::getCellStatus(size_t row, size_t column) const {
@@ -66,25 +65,8 @@ size_t World::getHeight() const {
     return height;
 }
 
-void World::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    // Cell object to draw in alive cells
-    sf::RectangleShape cell(sf::Vector2f(1,1));
-    cell.setScale(sf::Vector2f(renderScale, renderScale));
-    cell.setFillColor(sf::Color::White);
-
-    // Drawing object in alive cells
-    for (size_t i=0; i < height; i++) {
-        for (size_t j=0; j < width; j++) {
-
-            if (!getCellStatus(j,i)) continue;
-            sf::Vector2f newPosition;
-            newPosition.x = j * renderScale;
-            newPosition.y = i * renderScale;
-            cell.setPosition(newPosition);
-            target.draw(cell);
-            
-        }
-    }
+unsigned long World::getPopulation() const {
+    return population;
 }
 
 void World::randomizeStatus(float alivePercentage = 0.5) {
