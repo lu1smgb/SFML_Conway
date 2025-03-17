@@ -18,6 +18,7 @@ Simulator::Simulator(World world) {
 }
 
 void Simulator::nextTick() {
+    if (paused) return;
     World nextTickWorld(world.getWidth(), world.getHeight());
     for (size_t i = 0; i < world.getHeight(); i++) {
         for (size_t j = 0; j < world.getWidth(); j++) {
@@ -34,6 +35,18 @@ void Simulator::nextTick() {
 
 World* Simulator::getWorld() {
     return &world;
+}
+
+void Simulator::pause() {
+    paused = true;
+}
+
+void Simulator::resume() {
+    paused = false;
+}
+
+bool Simulator::isRunning() const {
+    return !paused;
 }
 
 unsigned long Simulator::getGenerationNumber() const {

@@ -23,6 +23,7 @@ void SimulationWindow::start() {
     sf::Font counterFont;
     if (!counterFont.loadFromFile("../fonts/DepartureMonoNerdFontPropo-Regular.otf")) {
         std::cerr << "Font could not be loaded" << std::endl;
+        return;
     }
     sf::Color counterColor(0, 255, 255);
     unsigned int counterCharSize = 30;
@@ -42,7 +43,23 @@ void SimulationWindow::start() {
     generationCounter.setPosition(sf::Vector2f(8, size.y - counterCharSize - 8)); 
     populationCounter.setPosition(sf::Vector2f(8, size.y - counterCharSize * 2 - 8));
 
+    // Display for simulator status (running, paused)
+    sf::Font runningFont;
+    if (!runningFont.loadFromFile("../fonts/BigBlueTerm437NerdFontPropo-Regular.ttf")) {
+        std::cerr << "Font could not be loaded" << std::endl;
+        return;
+    }
+    sf::Text runningDisplay;
+    runningDisplay.setFont(runningFont);
+    runningDisplay.setFillColor(sf::Color::Red);
+    runningDisplay.setOutlineThickness(2);
+    runningDisplay.setOutlineColor(sf::Color::Black);
+    runningDisplay.setCharacterSize(counterCharSize);
+    runningDisplay.setPosition(sf::Vector2f(8, size.y - counterCharSize * 3 - 8));
+
     while (window.isOpen()) {
+        
+        // Window event managing
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -50,6 +67,7 @@ void SimulationWindow::start() {
             }
         }
 
+        // Clear
         window.clear(sf::Color::Black);
 
         // Cell object to draw in alive cells
@@ -77,7 +95,27 @@ void SimulationWindow::start() {
         window.draw(generationCounter);
         window.draw(populationCounter);
 
+        // Running display
+        if (simulator.isRunning()) {
+            runningDisplay.setString("Running");
+            runningDisplay.setFillColor(sf::Color::Green);
+        }
+        else {
+            runningDisplay.setString("Paused");
+            runningDisplay.setFillColor(sf::Color::Red);
+        }
+        window.draw(runningDisplay);
+
+        // Render objects
         window.display();
+
+        // Small delay for checking the very first generation
+        if (!simulator.isRunning()) {
+            sf::sleep(sf::seconds(2));
+            simulator.resume();
+        }
+
+        // Get to the next generation
         simulator.nextTick();
     }
 
