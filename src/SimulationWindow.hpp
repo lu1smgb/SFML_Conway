@@ -8,8 +8,8 @@ class SimulationWindow {
 protected:
     Simulator simulator;
     sf::Vector2f size;
-    unsigned long speed = 8;
-    sf::Vector2f renderScale = sf::Vector2f(8,8); 
+    unsigned long speed = 20;
+    float renderScale = 4; 
     std::string name = "SimulationWindow";
 public:
     SimulationWindow(sf::Vector2f size, std::string name);

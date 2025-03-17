@@ -41,7 +41,6 @@ World::World(size_t width, size_t height) {
 void World::setCellStatus(size_t row, size_t column, bool newStatus) {
     if (!validIndexes(row, column)) return;
     grid[row][column] = newStatus;
-    population += newStatus ? 1 : -1; // TODO: Problemas de overflow
 }
 
 bool World::getCellStatus(size_t row, size_t column) const {
@@ -66,7 +65,14 @@ size_t World::getHeight() const {
 }
 
 unsigned long World::getPopulation() const {
-    return population;
+    // TODO: Unefficient, fix this in setCellStatus
+    unsigned long counter = 0;
+    for (size_t i = 0; i < getHeight(); i++) {
+        for (size_t j = 0; j < getWidth(); j++) {
+            if (getCellStatus(i, j)) counter++;
+        }
+    }
+    return counter;
 }
 
 void World::randomizeStatus(float alivePercentage = 0.5) {
