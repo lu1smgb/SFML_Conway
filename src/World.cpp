@@ -77,7 +77,7 @@ void World::randomizeStatus(float alivePercentage = 0.5) {
     for (size_t i = 0; i < this->getHeight(); i++) {
         for (size_t j = 0; j < this->getWidth(); j++) {
             float randVal = dis(gen);
-            setCellStatus(j, i, randVal > alivePercentage);
+            setCellStatus(i, j, randVal > alivePercentage);
         }
     }
 }

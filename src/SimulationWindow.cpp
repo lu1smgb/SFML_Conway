@@ -5,7 +5,8 @@
 
 SimulationWindow::SimulationWindow(sf::Vector2f size, std::string name) {
     this->size = size;
-    World world = World(ceil(size.x/renderScale.x), ceil(size.y/renderScale.y));
+    double sizeX = ceil(size.x/renderScale.x), sizeY = ceil(size.y/renderScale.y);
+    World world = World(sizeX, sizeY);
     world.randomizeStatus(0.5);
     this->simulator = Simulator(world);
     this->name = name;
@@ -36,7 +37,7 @@ void SimulationWindow::start() {
         for (size_t i=0; i < world->getHeight(); i++) {
             for (size_t j=0; j < world->getWidth(); j++) {
 
-                if (!world->getCellStatus(j,i)) continue;
+                if (!world->getCellStatus(i,j)) continue;
                 sf::Vector2f newPosition;
                 newPosition.x = j * renderScale.x;
                 newPosition.y = i * renderScale.y;

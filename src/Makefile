@@ -15,7 +15,7 @@ SimulationWindow.o: SimulationWindow.cpp SimulationWindow.hpp
 EXE_NAME = main
 EXE_DEPENDENCIES = $(BIN_DIR)/$(EXE_NAME).o $(BIN_DIR)/World.o $(BIN_DIR)/Simulator.o $(BIN_DIR)/SimulationWindow.o
 
-$(EXE_NAME).o: $(EXE_NAME).cpp
+$(BIN_DIR)/$(EXE_NAME).o: $(EXE_NAME).cpp
 	$(CC) -c $< -o $(BIN_DIR)/$(EXE_NAME).o
 
 $(EXE_NAME): $(BIN_DIR)/main.o World.o Simulator.o SimulationWindow.o
