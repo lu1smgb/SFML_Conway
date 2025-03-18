@@ -7,3 +7,5 @@ Features to be implemented:
 - Unit constructors: statics, oscillators and spaceships
 - User interaction
 - GUI
+
+![Window](.screenshots/window.png)
