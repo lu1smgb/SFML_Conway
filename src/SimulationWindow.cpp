@@ -17,6 +17,7 @@ void SimulationWindow::start() {
     // Window
     sf::RenderWindow window(sf::VideoMode(size.x, size.y), name);
     window.setFramerateLimit(speed);
+    window.setKeyRepeatEnabled(false);
     World *world = simulator.getWorld();
 
     // Font and color for counter displays
@@ -65,6 +66,17 @@ void SimulationWindow::start() {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
+            if (event.type == sf::Event::KeyPressed and sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+                simulator.isRunning() ? simulator.pause() : simulator.resume();
+            }
+            if (focus && event.type == sf::Event::LostFocus and simulator.isRunning()) {
+                simulator.pause();
+                focus = false;
+            }
+            if (!focus && event.type == sf::Event::GainedFocus and !simulator.isRunning()) {
+                simulator.resume();
+                focus = true;
+            }
         }
 
         // Clear
@@ -108,12 +120,6 @@ void SimulationWindow::start() {
 
         // Render objects
         window.display();
-
-        // Small delay for checking the very first generation
-        if (!simulator.isRunning()) {
-            sf::sleep(sf::seconds(2));
-            simulator.resume();
-        }
 
         // Get to the next generation
         simulator.nextTick();
