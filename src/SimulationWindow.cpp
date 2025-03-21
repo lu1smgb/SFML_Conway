@@ -7,7 +7,7 @@ SimulationWindow::SimulationWindow(sf::Vector2f size, std::string name) {
     this->size = size;
     double sizeX = ceil(size.x/renderScale), sizeY = ceil(size.y/renderScale);
     World world = World(sizeX, sizeY);
-    world.randomizeStatus(0.5);
+    // world.randomizeStatus(0.5);
     this->simulator = Simulator(world);
     this->name = name;
 }
@@ -62,22 +62,50 @@ void SimulationWindow::start() {
         
         // Window event managing
         sf::Event event;
+        sf::Vector2i relativeMousePos = sf::Mouse::getPosition(window);
+        sf::Vector2u mappedPos(relativeMousePos.y / renderScale, relativeMousePos.x / renderScale);
+        static bool drawing = false;
+        static std::vector<sf::Vector2u> drawingPath;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+
+            if (event.type == sf::Event::Closed or event.type == sf::Event::KeyPressed and sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
                 window.close();
             }
             if (event.type == sf::Event::KeyPressed and sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space)) {
+                //std::cout << "Pressed space" << std::endl;
                 simulator.isRunning() ? simulator.pause() : simulator.resume();
             }
             if (focus && event.type == sf::Event::LostFocus and simulator.isRunning()) {
+                //std::cout << "Paused by unfocus" << std::endl;
                 simulator.pause();
                 focus = false;
+                drawing = false;
             }
             if (!focus && event.type == sf::Event::GainedFocus and !simulator.isRunning()) {
+                //std::cout << "Running by focused" << std::endl;
                 simulator.resume();
                 focus = true;
             }
+            if (focus and event.type == sf::Event::MouseButtonPressed and sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                // std::cout << "Drawing" << std::endl;
+                drawing = true;
+            }
+            if (drawing and sf::Mouse::isButtonPressed(sf::Mouse::Left) and std::find(drawingPath.begin(), drawingPath.end(), mappedPos) == drawingPath.end()) {
+                bool posStatus = world->getCellStatus(mappedPos.x, mappedPos.y);
+                // std::cout << "Cambiado de " << posStatus;
+                world->setCellStatus(mappedPos.x, mappedPos.y, !posStatus);
+                posStatus = world->getCellStatus(mappedPos.x, mappedPos.y);
+                // std::cout << " a " << posStatus << " en " << mappedPos.x << ", " << mappedPos.y << std::endl;
+                drawingPath.push_back(mappedPos);
+                std::cout << drawingPath.size() << std::endl;
+            }
+            if (focus and drawing and event.type == sf::Event::MouseButtonReleased) {
+                // std::cout << "Stopped drawing" << std::endl;
+                drawing = false;
+            }
         }
+
+        if (!drawing) drawingPath.clear();
 
         // Clear
         window.clear(sf::Color::Black);
@@ -103,9 +131,7 @@ void SimulationWindow::start() {
 
         // Display generation and population
         generationCounter.setString("Generation:" + std::to_string(simulator.getGenerationNumber()));
-        populationCounter.setString("Population:" + std::to_string(world->getPopulation()));        
-        window.draw(generationCounter);
-        window.draw(populationCounter);
+        populationCounter.setString("Population:" + std::to_string(world->getPopulation()));      
 
         // Running display
         if (simulator.isRunning()) {
@@ -116,7 +142,13 @@ void SimulationWindow::start() {
             runningDisplay.setString("Paused");
             runningDisplay.setFillColor(sf::Color::Red);
         }
-        window.draw(runningDisplay);
+
+        // Draw displays
+        if (size.x >= 640 and size.y >= 640) {
+            window.draw(generationCounter);
+            window.draw(populationCounter);
+            window.draw(runningDisplay);
+        }  
 
         // Render objects
         window.display();
