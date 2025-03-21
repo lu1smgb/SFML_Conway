@@ -24,8 +24,8 @@ World::World() {}
 World::World(const World& other) {
     this->width = other.width;
     this->height = other.height;
-    this->population = other.population;
     this->grid = other.grid;
+    syncPopulation();
 }
 
 World::World(size_t width, size_t height) {
@@ -40,7 +40,11 @@ World::World(size_t width, size_t height) {
 
 void World::setCellStatus(size_t row, size_t column, bool newStatus) {
     if (!validIndexes(row, column)) return;
+    if (newStatus == getCellStatus(row, column)) return;
+    if (newStatus == false and population <= 0) return;
+    if (newStatus == true and population>=ULONG_MAX) return;
     grid[row][column] = newStatus;
+    population += newStatus ? 1 : -1;
 }
 
 bool World::getCellStatus(size_t row, size_t column) const {
@@ -65,14 +69,17 @@ size_t World::getHeight() const {
 }
 
 unsigned long World::getPopulation() const {
-    // TODO: Unefficient, fix this in setCellStatus
+    return population;
+}
+
+void World::syncPopulation() {
     unsigned long counter = 0;
     for (size_t i = 0; i < getHeight(); i++) {
         for (size_t j = 0; j < getWidth(); j++) {
             if (getCellStatus(i, j)) counter++;
         }
     }
-    return counter;
+    population = counter;
 }
 
 void World::randomizeStatus(float alivePercentage = 0.5) {

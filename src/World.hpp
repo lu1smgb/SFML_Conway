@@ -27,6 +27,7 @@ public:
     size_t getWidth() const;
     size_t getHeight() const;
     unsigned long getPopulation() const;
+    void syncPopulation();
     void randomizeStatus(float alivePercentage);
 };
 
